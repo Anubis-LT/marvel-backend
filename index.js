@@ -13,16 +13,21 @@ const app = express();
 app.use(formidable());
 app.use(cors());
 
-mongoose.connect(process.env.MONGODB_URI, {
-  useUnifiedTopology: true,
-  useNewUrlParser: true,
-  useCreateIndex: true,
-});
+mongoose.connect(
+  process.env.MONGODB_URI
+    ? process.env.MONGODB_URI
+    : "mongodb://localhost:27017",
+  {
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+    useCreateIndex: true,
+  }
+);
 //https://lereacteur-marvel-api.herokuapp.com/comics?apiKey=
 
 // Import des routes
-//const userRoutes = require("./routes/user");
-//app.use(userRoutes);
+const userRoutes = require("./routes/user");
+app.use(userRoutes);
 // Acces Comics
 const listComicsRoutes = require("./routes/comics");
 app.use(listComicsRoutes);
@@ -45,6 +50,6 @@ app.all("*", (req, res) => {
   res.status(404).json({ message: "Cette route n'existe pas" });
 });
 
-app.listen(3001, () => {
+app.listen(process.env.PORT ? process.env.PORT : 3001, () => {
   console.log("Server Started ");
 });

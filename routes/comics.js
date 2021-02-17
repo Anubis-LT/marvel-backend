@@ -1,15 +1,50 @@
 const express = require("express");
 const router = express.Router();
+const axios = require("axios");
 
-router.get("/list", async (req, res) => {
+// 2request characters & comics
+
+// list charaters
+router.get("/characters", async (req, res) => {
   try {
-    // Returns the number of results found
-
-    res.status(200).json({
-      list: ok,
-    });
+    // filters
+    const skip = req.query.skip;
+    const limit = 100; //req.query.limit ;
+    // requests
+    const request = await axios.get(
+      `https://lereacteur-marvel-api.herokuapp.com/characters?apiKey=${process.env.API_KEY}&limit=${limit}&skip=${skip}`
+    );
+    res.json(request.data);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.log("characters error", error.message);
+    res.status(400).json({ message: error.message });
   }
 });
+
+router.get("/comics", async (req, res) => {
+  try {
+    const skip = req.query.skip;
+    const limit = req.query.limit;
+    const request = await axios.get(
+      `https://lereacteur-marvel-api.herokuapp.com/comics?apiKey=${process.env.API_KEY}&limit=${limit}&skip=${skip}`
+    );
+    res.json(request.data);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+// Search Id Character
+router.get("/comics/:characterId", async (req, res) => {
+  try {
+    const characterId = req.params.characterId;
+    const request = await axios.get(
+      `https://lereacteur-marvel-api.herokuapp.com/comics/${characterId}?apiKey=${process.env.API_KEY}`
+    );
+    res.json(request.data);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
 module.exports = router;

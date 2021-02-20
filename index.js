@@ -14,42 +14,42 @@ app.use(formidable());
 app.use(cors());
 
 mongoose.connect(
-  process.env.MONGODB_URI
-    ? process.env.MONGODB_URI
-    : "mongodb://localhost:27017",
-  {
-    useUnifiedTopology: true,
-    useNewUrlParser: true,
-    useCreateIndex: true,
-  }
+   process.env.MONGODB_URI
+      ? process.env.MONGODB_URI
+      : "mongodb://localhost:27017",
+   {
+      useUnifiedTopology: true,
+      useNewUrlParser: true,
+      useCreateIndex: true,
+   }
 );
 //https://lereacteur-marvel-api.herokuapp.com/comics?apiKey=
 
 // Import des routes
 const userRoutes = require("./routes/user");
 app.use(userRoutes);
-// Acces Comics
-const listComicsRoutes = require("./routes/comics");
-app.use(listComicsRoutes);
+
+const searchRoutes = require("./routes/search");
+app.use(searchRoutes);
 
 app.get("/", (req, res) => {
-  fs.readFile("./html/index.html")
-    .then((contents) => {
-      res.setHeader("Content-Type", "text/html");
-      res.writeHead(200);
-      res.end(contents);
-    })
-    .catch((err) => {
-      res.writeHead(500);
-      res.end(err);
-      return;
-    });
+   fs.readFile("./html/index.html")
+      .then((contents) => {
+         res.setHeader("Content-Type", "text/html");
+         res.writeHead(200);
+         res.end(contents);
+      })
+      .catch((err) => {
+         res.writeHead(500);
+         res.end(err);
+         return;
+      });
 });
 
 app.all("*", (req, res) => {
-  res.status(404).json({ message: "Cette route n'existe pas" });
+   res.status(404).json({ message: "Cette route n'existe pas" });
 });
 
 app.listen(process.env.PORT ? process.env.PORT : 3001, () => {
-  console.log("Server Started ");
+   console.log("Server Started ");
 });

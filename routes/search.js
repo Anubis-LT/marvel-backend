@@ -2,15 +2,16 @@ const express = require("express");
 const router = express.Router();
 const axios = require("axios");
 
-router.get("/display", async (req, res) => {
+router.post("/display", async (req, res) => {
    try {
-      console.log(req.fields.source, req.fields.request);
+      console.log(req.fields);
       const response = await axios.get(
-         req.fields.request != undefined
-            ? `https://lereacteur-marvel-api.herokuapp.com/${req.fields.source}?apiKey=${process.env.API_KEY}${req.fields.request}`
+         req.fields.request != undefined || req.fields.request != ""
+            ? `https://lereacteur-marvel-api.herokuapp.com/${req.fields.source}?apiKey=${process.env.API_KEY}&${req.fields.request}`
             : `https://lereacteur-marvel-api.herokuapp.com/${req.fields.source}?apiKey=${process.env.API_KEY}`
       );
 
+      console.log(response.data);
       res.json(response.data);
    } catch (error) {
       console.log("request search error", error.message);
